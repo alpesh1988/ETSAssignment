@@ -1,0 +1,51 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jun 3, 2014, 8:20:48 PM
+    Author     : papu
+*/
+
+#addNodeButton{
+    background: url("../assets/plus.png") no-repeat scroll 6px 10px #000000;
+    border: 0 none;
+    border-radius: 0;
+    box-shadow: none;
+    color: #FFFFFF;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 150px;
+}
+
+.element_class{
+    border: 8px solid #CFCFCF;
+    float: left;
+    height: 15px;
+    padding: 10px;
+    text-align: center;
+    width: 100px;
+}
+
+.plus-image-class {
+    background: url("../assets/plus.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    float: left;
+    height: 19px;
+    left: -5px;
+    position: relative;
+    top: 15px;
+    width: 20px;
+}
+
+.minus-image-class {
+    background: url("../assets/minus.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    float: left;
+    height: 19px;
+    left: -5px;
+    position: relative;
+    top: 15px;
+    width: 20px;
+}

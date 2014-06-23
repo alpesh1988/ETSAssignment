@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>ETSApplication</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="css/style.css">
+        <script>
+            var i = 1;
+            var val = 'id_';
+            
+            var className = 'element_class';
+            var mainId = 'element_id_';
+            var connectionArray = new Array();/* to store connection between which elements*/
+            
+            /*  Line options settings*/            
+            var lineColor = '#ff0000';
+            var lineStyle = [5,3];
+            var lineWidth = 3;
+            
+            function createelement(){
+                
+                /*  creating parent div and input box */
+                var parentDiv = document.createElement("div");
+                var childInput = document.createElement("input");
+                
+                /*  creating div for plus image */
+                var imageDiv = document.createElement("div");
+                imageDiv.setAttribute("class", 'plus-image-class' );
+                
+                /*  called when plus-image or minus-image is clicked */
+                imageDiv.onclick = function() {                    
+                    /*  To identify whether line needs to be drawn or remove  */
+                    var whichClass = imageDiv.getAttribute("class");
+                    
+                    /*  draw Line between two elements   */
+                    if( whichClass === 'plus-image-class' ){
+                    
+                        var elementId = prompt("Enter Element ID to be connected","");
+                        
+                        var elem = document.getElementById(elementId);
+                        
+                        /* When Element exists in DOM */
+                        if ( elem !== null ) {
+                            
+                            var fromElement = imageDiv.parentNode.getAttribute("id");
+                            var toElement = document.getElementById( elementId ).parentNode.getAttribute("id");
+                            
+                            /* Dont draw line on same element */
+                            if( fromElement === toElement ){
+                                alert('Line cannot be drawn between same element.');
+                            }
+                            /*  draw line between two elements */
+                            else{
+                                connectionArray.push(fromElement + '-' + toElement );
+
+                                canvas.width=canvas.width;
+                                drawLine();
+
+                                /* Removing plus(+) image and adding Minus(-) Image from clicked element    */
+                                imageDiv.removeAttribute("class", 'plus-image-class' );
+                                imageDiv.setAttribute("class", 'minus-image-class' );
+
+                                /* Removing plus(+) image from second element    */
+                                var imageElement = document.getElementById(toElement);
+                                imageElement.children[1].removeAttribute("class", 'plus-image-class' );
+                            }
+                        }
+                        /* When Element Not exists in DOM */
+                        else{
+                            alert('Element with ID "'+  elementId + '" is Not present in DOM. ');
+                        }
+                    }
+                    /*   Remove Line which is already drawn between two elements   */
+                    else{
+                        canvas.width=canvas.width;
+                        for(var i =0;i<connectionArray.length;i++){
+                            
+                            var elementArr=connectionArray[i].split('-');                            
+                            var firstElement = imageDiv.parentNode;
+                            
+                            if( firstElement.getAttribute('id') === elementArr[0] ){
+                                
+                                firstElement.children[1].removeAttribute("class", 'minus-image-class' );
+                                firstElement.children[1].setAttribute("class", 'plus-image-class' );
+                                
+                                var secondElement = document.getElementById( elementArr[1] );
+                                secondElement.children[1].removeAttribute("class", 'minus-image-class' );
+                                secondElement.children[1].setAttribute("class", 'plus-image-class' );
+                                
+                                connectionArray.splice(i,1);
+                                break;
+                            }
+                        }                        
+                        drawLine();
+                    }
+                }
+        
+                childInput.type = 'text' ;
+                childInput.value = val + i ;
+                childInput.setAttribute("id", childInput.value );
+                
+                /*  called when input content changed */
+                childInput.oninput = function() {
+                    childInput.setAttribute("id", childInput.value );
+                }
+                
+                /*  adding div and image into main-parent div */
+                parentDiv.appendChild(childInput);
+                parentDiv.appendChild(imageDiv);
+                
+                /*  settings attributes to child div  */
+                childInput.setAttribute("class", className );                
+                
+                /*  settings attributes to parent div */
+                document.body.appendChild(parentDiv);
+                parentDiv.setAttribute("id", mainId + i );
+                parentDiv.setAttribute("draggable", true );                
+                                
+                /* make position sensitive to size and document's width - RANDOM Position    */
+                var posx = parseInt( Math.random() * ( window.screen.availWidth - 100 ));
+                var posy = parseInt( Math.random() * ( window.screen.availHeight - 15 ));
+                
+                var randomx = parseInt( Math.floor( Math.random() * posx + 1 ));
+                var randomy = parseInt( Math.floor( Math.random() * posy + 1 ));
+ 
+                parentDiv.style.left = randomx + 'px';
+                parentDiv.style.top = randomy + 'px';
+                
+                /*  To make divs draggable  */
+                draggable( mainId + i  );        
+                i++;                
+            }
+
+            var dragObj = null;
+            function draggable(id)
+            {
+                var obj = document.getElementById(id);
+                obj.style.position = "absolute";
+                obj.onmousedown = function(){
+                    dragObj = obj;
+                    canvas.width=canvas.width;                        
+                    drawLine();
+                }
+            }
+
+            document.onmouseup = function(e){
+                dragObj = null;
+                canvas.width=canvas.width;                    
+                drawLine()  ;
+
+            };
+
+            document.onmousemove = function(e){
+                var x = e.pageX;
+                var y = e.pageY;
+
+                if(dragObj == null)
+                    return;
+
+                dragObj.style.left = x - 75 +"px";
+                dragObj.style.top= y - 45 +"px";
+                
+                canvas.width=canvas.width;                        
+                drawLine();
+            };
+            
+            var ctx='';
+            function fullCanvas() {
+                var canvas = document.getElementById('canvas');
+                ctx = canvas.getContext('2d');            
+                canvas.width = window.screen.availWidth;
+                canvas.height = window.screen.availHeight;
+            }            
+            
+            /*  draw a line between two elements  */
+            function drawLine(){
+                for(var i =0;i<connectionArray.length;i++){
+                    
+                    var elementArr = connectionArray[i].split('-');
+                    
+                    var firstElement = document.getElementById( elementArr[0] );
+                    var secondElement = document.getElementById( elementArr[1] );
+                                        
+                    var left1 = parseInt( firstElement.style.left + 77 );
+                    var left2 = parseInt( secondElement.style.left + 77 );
+                    var top1 = parseInt( firstElement.style.top  );
+                    var top2 = parseInt( secondElement.style.top  );
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(left1,top1);
+                    ctx.lineTo(left2,top2);
+                    ctx.lineWidth = lineWidth;
+                    ctx.strokeStyle = lineColor;
+                    ctx.setLineDash(lineStyle);
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            }
+        </script> 
+    </head>
+    <body onload="fullCanvas();">
+        <canvas id="canvas"></canvas>
+        <input id="addNodeButton" type="button" value="Add Element" onclick="createelement();">
+    </body>
+</html>
